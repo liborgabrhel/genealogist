@@ -1,0 +1,6 @@
+.container {
+  grid-area: app-footer;
+
+  display: grid;
+  padding: 20px 24px;
+}

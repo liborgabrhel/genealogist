@@ -1,0 +1,12 @@
+.container {
+  grid-area: app-body;
+  display: grid;
+  position: relative;
+  width: 100%;
+  min-height: 100dvh;
+  grid-template-columns: 1fr;
+  justify-content: center;
+  justify-items: center;
+  padding: 20px 24px;
+  margin-top: calc((2 * 20px) + (1.75rem * 1.5));
+}
