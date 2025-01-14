@@ -1,0 +1,179 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Person {
+  id String @id @default(cuid())
+
+  firstName     String?
+  lastName      String
+  birthLastName String? // e.g., for women who change their last name after marriage
+
+  birthDate  DateTime?
+  birthPlace String?
+
+  baptismDate DateTime?
+
+  deathDate    DateTime?
+  deathPlace   String?
+  causeOfDeath String?
+
+  isAlive Boolean @default(true)
+
+  gender      String?
+  nationality String?
+  ethnicity   String?
+
+  religiousAffiliation String?
+
+  replationships Relationship[]
+  marriages      Marriage[]
+
+  professions Profession[]
+  residences  Residence[]
+  note        String?
+  photos      Photo[]
+  documents   Document[]
+  events      Event[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([lastName, firstName]) // Optimize name searches in this order too
+  @@index([birthLastName]) // For maiden name searches
+  @@index([deathDate]) // For searching deceased persons
+  @@index([isAlive]) // For filtering living/deceased
+  @@index([birthPlace]) // For geographic searches
+  @@index([deathPlace]) // For geographic searches
+}
+
+model Relationship {
+  id String @id @default(cuid())
+
+  personId String
+  person   Person @relation(fields: [personId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+
+  relationshipType String // e.g., parent, child, sibling, partner, spouse
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([relationshipType]) // For filtering by relationship type
+  @@index([personId, relationshipType]) // For finding specific relationships
+}
+
+model Marriage {
+  id String @id @default(cuid())
+
+  marriageDate DateTime?
+  divorceDate  DateTime?
+
+  persons Person[]
+
+  note String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([marriageDate]) // Index for searching by marriage date
+}
+
+model Profession {
+  id String @id @default(cuid())
+
+  name        String
+  description String?
+
+  persons Person[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([name]) // Index for searching by profession name
+}
+
+model Residence {
+  id String @id @default(cuid())
+
+  country            String
+  state              String?
+  city               String?
+  street             String?
+  buildingNumber     String?
+  postalCode         String?
+  coordinates        String?
+  isCurrentResidence Boolean @default(false)
+
+  moveInDate  DateTime?
+  moveOutDate DateTime?
+
+  persons Person[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([country, state, city]) // For hierarchical location searches
+  @@index([isCurrentResidence]) // For finding current residences
+  @@index([moveInDate, moveOutDate]) // For timeline queries
+  @@index([postalCode]) // For geographic grouping
+}
+
+model Photo {
+  id String @id @default(cuid())
+
+  altText     String?
+  contentType String
+  blob        Bytes
+
+  type        String? // e.g., portrait, group photo, event photo
+  description String?
+
+  persons Person[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([type]) // For filtering by photo type
+}
+
+model Document {
+  id String @id @default(cuid())
+
+  fileName    String @unique
+  contentType String
+  blob        Bytes
+
+  type        String? // e.g., birth certificate, marriage certificate, death certificate
+  description String?
+
+  persons Person[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([type]) // For filtering by document type
+  @@index([fileName]) // For file searches
+}
+
+model Event {
+  id String @id @default(cuid())
+
+  type        String // e.g., graduation, immigration, military service
+  date        DateTime?
+  place       String?
+  description String?
+
+  persons Person[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([type]) // For filtering by event type
+  @@index([date]) // For timeline queries
+  @@index([place]) // For geographic searches
+}

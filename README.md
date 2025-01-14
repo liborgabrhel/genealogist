@@ -1,4 +1,5 @@
-# Welcome to React Router!
+# Genealogist
+Web application for managing genealogical data and family history.
 
 A modern, production-ready template for building full-stack React applications using React Router.
 
