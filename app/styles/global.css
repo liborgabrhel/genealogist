@@ -24,8 +24,15 @@ h3,
 h4,
 h5,
 h6 {
-  font-size: 1.75rem;
   font-weight: var(--font-weight-bold);
   line-height: 1.5;
   margin: 0;
+}
+
+h1 {
+  font-size: 1.75rem;
+}
+
+h2 {
+  font-size: 1.25rem;
 }
