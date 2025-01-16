@@ -33,13 +33,13 @@ model Person {
 
   replationships Relationship[]
   marriages      Marriage[]
+  professions    Profession[]
+  residences     Residence[]
+  photos         Photo[]
+  documents      Document[]
+  events         Event[]
 
-  professions Profession[]
-  residences  Residence[]
-  note        String?
-  photos      Photo[]
-  documents   Document[]
-  events      Event[]
+  note String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

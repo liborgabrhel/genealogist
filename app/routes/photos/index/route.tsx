@@ -3,14 +3,15 @@
 import { Link } from "react-router"
 
 import { Page } from "~/components/page"
+import { PageHeader } from "~/components/page-header"
 
 export default function Route() {
   return (
     <Page>
-      <Link to={"/persons"}>Persons</Link>
-      <Link to={"/photos"}>Photos</Link>
+      <PageHeader>
+        <h2>Photos</h2>
+        <Link to={"/photos/add-photo"}>+ Add Photo</Link>
+      </PageHeader>
     </Page>
   )
 }
-
-export { meta } from "./_meta"

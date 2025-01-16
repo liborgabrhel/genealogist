@@ -13,26 +13,18 @@ import {
 import { AppBody } from "~/components/app-body"
 import { AppFooter } from "~/components/app-footer"
 import { AppHeader } from "~/components/app-header"
+import { preloadFonts } from "~/utils/preload-fonts"
 
 import type { Route } from "./+types/root"
-import stylesheet from "./app.css?url"
+// import stylesheet from "./app.css?url"
 
 import "./styles/global.css"
 import "./styles/colors.css"
 import "./styles/fonts.css"
 
 export const links: Route.LinksFunction = () => [
-  { rel: "preconnect", href: "https://fonts.googleapis.com" },
-  {
-    rel: "preconnect",
-    href: "https://fonts.gstatic.com",
-    crossOrigin: "anonymous",
-  },
-  {
-    rel: "stylesheet",
-    href: "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap",
-  },
-  { rel: "stylesheet", href: stylesheet },
+  ...preloadFonts("regular", "bold"),
+  { rel: "alternate icon", href: "/favicon.ico" },
 ]
 
 export function Layout({ children }: { children: ReactNode }) {
