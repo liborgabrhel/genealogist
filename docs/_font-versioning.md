@@ -7,4 +7,4 @@ Font version is specified in the font url as a query parameter e.g. `?v=1.0.0`. 
 1. Update the font version in the font url in the [`app/styles/fonts.css`](../app/styles/fonts.css) file.
 2. Update the font version in the font url (href) in the [`app/utils/preload-fonts.ts`](../app/utils/preload-fonts.ts) file.
 
-Note: Inconsistent font url can cause the browser to download the font file multiple times.
+Note: Inconsistent font urls can cause the browser to download the font file multiple times.
