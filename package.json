@@ -23,6 +23,8 @@
     "@conform-to/zod": "1.2.2",
     "@epic-web/remember": "1.1.0",
     "@liborgabrhel/style-utils": "1.1.0",
+    "@mjackson/form-data-parser": "0.6.0",
+    "@paralleldrive/cuid2": "2.2.2",
     "@prisma/client": "6.2.1",
     "@react-router/node": "7.1.1",
     "@react-router/serve": "7.1.1",
