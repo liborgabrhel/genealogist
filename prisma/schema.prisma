@@ -14,30 +14,21 @@ model Person {
   lastName      String
   birthLastName String? // e.g., for women who change their last name after marriage
 
-  birthDate  DateTime?
-  birthPlace String?
-
-  baptismDate DateTime?
-
-  deathDate    DateTime?
-  deathPlace   String?
-  causeOfDeath String?
-
   isAlive Boolean @default(true)
 
-  gender      String?
-  nationality String?
-  ethnicity   String?
-
+  gender               String?
+  nationality          String?
+  ethnicity            String?
   religiousAffiliation String?
 
-  replationships Relationship[]
-  marriages      Marriage[]
-  professions    Profession[]
-  residences     Residence[]
-  photos         Photo[]
-  documents      Document[]
-  events         Event[]
+  outgoingRelationships Relationship[] @relation("Source Person")
+  incomingRelationships Relationship[] @relation("Target Person")
+
+  professions Profession[]
+  photos      Photo[]
+  documents   Document[]
+  residences  Residence[]
+  events      Event[]
 
   note String?
 
@@ -46,41 +37,27 @@ model Person {
 
   @@index([lastName, firstName]) // Optimize name searches in this order too
   @@index([birthLastName]) // For maiden name searches
-  @@index([deathDate]) // For searching deceased persons
   @@index([isAlive]) // For filtering living/deceased
-  @@index([birthPlace]) // For geographic searches
-  @@index([deathPlace]) // For geographic searches
 }
 
 model Relationship {
   id String @id @default(cuid())
 
-  personId String
-  person   Person @relation(fields: [personId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  sourcePersonId String
+  sourcePerson   Person @relation("Source Person", fields: [sourcePersonId], references: [id], onUpdate: Cascade, onDelete: Cascade)
 
-  relationshipType String // e.g., parent, child, sibling, partner, spouse
+  targetPersonId String
+  targetPerson   Person @relation("Target Person", fields: [targetPersonId], references: [id], onUpdate: Cascade, onDelete: Cascade)
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([relationshipType]) // For filtering by relationship type
-  @@index([personId, relationshipType]) // For finding specific relationships
-}
-
-model Marriage {
-  id String @id @default(cuid())
-
-  marriageDate DateTime?
-  divorceDate  DateTime?
-
-  persons Person[]
+  type String // e.g., parent, child, sibling, partner, ex-partner, spouse, ex-spouse
 
   note String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([marriageDate]) // Index for searching by marriage date
+  @@index([sourcePersonId, targetPersonId, type]) // For finding specific relationships
+  @@index([type]) // For filtering by relationship type
 }
 
 model Profession {
@@ -88,6 +65,8 @@ model Profession {
 
   name        String
   description String?
+
+  note String?
 
   persons Person[]
 
@@ -100,17 +79,18 @@ model Profession {
 model Residence {
   id String @id @default(cuid())
 
-  country            String
-  state              String?
-  city               String?
-  street             String?
-  buildingNumber     String?
-  postalCode         String?
-  coordinates        String?
-  isCurrentResidence Boolean @default(false)
+  name        String
+  description String?
 
-  moveInDate  DateTime?
-  moveOutDate DateTime?
+  country        String
+  state          String?
+  city           String?
+  street         String?
+  buildingNumber String?
+  postalCode     String?
+  coordinates    String?
+
+  note String?
 
   persons Person[]
 
@@ -118,38 +98,47 @@ model Residence {
   updatedAt DateTime @updatedAt
 
   @@index([country, state, city]) // For hierarchical location searches
-  @@index([isCurrentResidence]) // For finding current residences
-  @@index([moveInDate, moveOutDate]) // For timeline queries
   @@index([postalCode]) // For geographic grouping
 }
 
 model Photo {
   id String @id @default(cuid())
 
-  altText     String?
+  name        String
+  description String?
+
+  altText String?
+
+  fileName    String @unique
   contentType String
   blob        Bytes
 
-  type        String? // e.g., portrait, group photo, event photo
-  description String?
+  type String? // e.g., portrait, group photo, event photo
+
+  note String?
 
   persons Person[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@index([name]) // For photo name searches
   @@index([type]) // For filtering by photo type
 }
 
 model Document {
   id String @id @default(cuid())
 
+  name        String
+  description String?
+
   fileName    String @unique
   contentType String
   blob        Bytes
 
-  type        String? // e.g., birth certificate, marriage certificate, death certificate
-  description String?
+  type String? // e.g., birth certificate, marriage certificate, death certificate
+
+  note String?
 
   persons Person[]
 
@@ -163,16 +152,21 @@ model Document {
 model Event {
   id String @id @default(cuid())
 
-  type        String // e.g., graduation, immigration, military service
-  date        DateTime?
-  place       String?
+  name        String
   description String?
+
+  type  String // e.g., graduation, immigration, military service, birth, death, marriage, divorce
+  date  DateTime?
+  place String?
+
+  note String?
 
   persons Person[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@index([name]) // For event name searches
   @@index([type]) // For filtering by event type
   @@index([date]) // For timeline queries
   @@index([place]) // For geographic searches
