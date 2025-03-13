@@ -21,13 +21,18 @@ import type { Route } from "./+types/root"
 import "./styles/global.css"
 import "./styles/colors.css"
 import "./styles/fonts.css"
+import "./styles/sizes.css"
 
 export const links: Route.LinksFunction = () => [
-  ...preloadFonts("regular", "bold"),
+  ...preloadFonts("regular", "medium", "bold"),
   { rel: "alternate icon", href: "/favicon.ico" },
 ]
 
-export function Layout({ children }: { children: ReactNode }) {
+type LayoutProps = {
+  children: ReactNode
+}
+
+export function Layout({ children }: LayoutProps) {
   return (
     <html lang="cs">
       <head>

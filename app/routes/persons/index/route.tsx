@@ -22,12 +22,7 @@ export default function Route({ loaderData }: Route.ComponentProps) {
           <ul>
             {loaderData.map((person) => (
               <li key={person.id}>
-                {person.firstName} {person.lastName}{" "}
-                {person.birthDate?.toLocaleDateString("cs-CZ", {
-                  year: "numeric",
-                  month: "numeric",
-                  day: "numeric",
-                })}
+                {person.firstName} {person.lastName}
               </li>
             ))}
           </ul>

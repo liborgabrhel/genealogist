@@ -11,4 +11,5 @@
   font-size: 1rem;
   font-weight: var(--font-weight-regular);
   border-radius: 4px;
+  width: 100%;
 }

@@ -1,4 +1,6 @@
-type Status = "error" | undefined
+import type { Submission } from "@conform-to/react"
+
+type Status = Submission<unknown>["status"]
 
 export const getStatusCodeFromSubmissionStatus = (status: Status) => {
   if (status === "error") {

@@ -1,5 +1,9 @@
 .fieldset {
   display: grid;
   position: relative;
+  grid-template-rows: auto;
+  justify-items: start;
+  align-items: start;
+  gap: 24px;
   width: 100%;
 }

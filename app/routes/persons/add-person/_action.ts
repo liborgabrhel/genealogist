@@ -26,8 +26,16 @@ export async function action({ request }: Route.ActionArgs) {
   let wasCreated = false
 
   try {
+    const { eventsToCreate, eventsToConnect, ...rest } = submission.value
+
     await prisma.person.create({
-      data: submission.value,
+      data: {
+        events: {
+          create: eventsToCreate,
+          connect: eventsToConnect?.map((id) => ({ id })),
+        },
+        ...rest,
+      },
     })
     wasCreated = true
   } catch (error) {

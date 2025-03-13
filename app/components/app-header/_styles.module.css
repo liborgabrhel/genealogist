@@ -1,13 +1,23 @@
-.container {
+.header {
+  --app-header-padding-x: 24px;
+  --app-header-padding-y: 20px;
+  --app-header-h1-font-size: 1.75rem;
+  --app-header-h1-line-height: 1.5;
+
   grid-area: app-header;
 
   display: grid;
-  position: fixed;
+  position: sticky;
   top: 0;
-  left: 0;
-  right: 0;
-  padding: 20px 24px;
+  width: 100%;
+  padding: var(--app-header-padding-y) var(--app-header-padding-x);
   background-color: var(--background-color);
   box-shadow: 0 0 4px 2px var(--box-shadow-color);
-  z-index: 1;
+  z-index: 2;
+
+  & h1 {
+    font-size: var(--app-header-h1-font-size);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--app-header-h1-line-height);
+  }
 }

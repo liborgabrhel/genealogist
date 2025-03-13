@@ -4,13 +4,11 @@ import { prisma } from "~/utils/db.server"
 
 export async function loader() {
   const persons = await prisma.person.findMany({
-    orderBy: [{ lastName: "asc" }, { firstName: "asc" }, { birthDate: "desc" }],
+    orderBy: [{ lastName: "asc" }, { firstName: "asc" }],
     select: {
       id: true,
       firstName: true,
       lastName: true,
-      birthDate: true,
-      deathDate: true,
     },
   })
 

@@ -22,6 +22,7 @@ export const TextArea = ({ label, errors, id, required, ...rest }: Props) => {
         id={id}
         required={required}
         {...rest}
+        rows={10}
       />
       <ErrorMessageGroup>
         {errors?.map((error, index) => (

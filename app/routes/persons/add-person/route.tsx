@@ -3,10 +3,12 @@
 import {
   getFormProps,
   getInputProps,
+  getSelectProps,
   getTextareaProps,
   useForm,
 } from "@conform-to/react"
 import { getZodConstraint, parseWithZod } from "@conform-to/zod"
+import { Link } from "react-router"
 
 import { Fieldset } from "~/components/fieldset"
 import { Form } from "~/components/form"
@@ -18,8 +20,14 @@ import { TextArea } from "~/components/text-area"
 
 import type { Route } from "./+types/route"
 import { schema } from "./_schema"
+import styles from "./_styles.module.css"
 
-export default function Route({ actionData }: Route.ComponentProps) {
+export default function Route({
+  actionData,
+  loaderData,
+}: Route.ComponentProps) {
+  const { events } = loaderData
+
   const [form, fields] = useForm({
     id: "add-person",
     constraint: getZodConstraint(schema),
@@ -29,6 +37,8 @@ export default function Route({ actionData }: Route.ComponentProps) {
     shouldRevalidate: "onBlur",
   })
 
+  const eventsToCreate = fields.eventsToCreate.getFieldList()
+
   return (
     <Page>
       <PageHeader>
@@ -36,7 +46,7 @@ export default function Route({ actionData }: Route.ComponentProps) {
       </PageHeader>
       <PageBody>
         <Form {...getFormProps(form)} errors={form.errors} method={"post"}>
-          <Fieldset>
+          <Fieldset className={styles.col2}>
             <Input
               label={"First Name"}
               errors={fields.firstName.errors}
@@ -47,45 +57,14 @@ export default function Route({ actionData }: Route.ComponentProps) {
               errors={fields.lastName.errors}
               {...getInputProps(fields.lastName, { type: "text" })}
             />
-          </Fieldset>
-
-          <Fieldset>
             <Input
               label={"Birth Last Name"}
               errors={fields.birthLastName.errors}
               {...getInputProps(fields.birthLastName, { type: "text" })}
             />
-            <Input
-              label={"Birth Date"}
-              errors={fields.birthDate.errors}
-              {...getInputProps(fields.birthDate, { type: "date" })}
-            />
-            <Input
-              label={"Birth Place"}
-              errors={fields.birthPlace.errors}
-              {...getInputProps(fields.birthPlace, { type: "text" })}
-            />
           </Fieldset>
 
-          <Fieldset>
-            <Input
-              label={"Death Date"}
-              errors={fields.deathDate.errors}
-              {...getInputProps(fields.deathDate, { type: "date" })}
-            />
-            <Input
-              label={"Death Place"}
-              errors={fields.deathPlace.errors}
-              {...getInputProps(fields.deathPlace, { type: "text" })}
-            />
-            <Input
-              label={"Cause Of Death"}
-              errors={fields.causeOfDeath.errors}
-              {...getInputProps(fields.causeOfDeath, { type: "text" })}
-            />
-          </Fieldset>
-
-          <Fieldset>
+          <Fieldset className={styles.col1}>
             <Input
               label={"Is Alive"}
               errors={fields.isAlive.errors}
@@ -93,7 +72,7 @@ export default function Route({ actionData }: Route.ComponentProps) {
             />
           </Fieldset>
 
-          <Fieldset>
+          <Fieldset className={styles.col2}>
             <Input
               label={"Gender"}
               errors={fields.gender.errors}
@@ -116,7 +95,7 @@ export default function Route({ actionData }: Route.ComponentProps) {
             />
           </Fieldset>
 
-          <Fieldset>
+          <Fieldset className={styles.col1}>
             <TextArea
               label={"Note"}
               errors={fields.note.errors}
@@ -124,7 +103,81 @@ export default function Route({ actionData }: Route.ComponentProps) {
             />
           </Fieldset>
 
+          <section>
+            <h3>Events</h3>
+
+            {events.length > 0 ? (
+              <Fieldset>
+                <select
+                  multiple={true}
+                  {...getSelectProps(fields.eventsToConnect)}
+                >
+                  {events.map((event) => (
+                    <option key={event.id} value={event.id}>
+                      {event.name} {event?.date ? `(${event.date})` : ""}
+                    </option>
+                  ))}
+                </select>
+              </Fieldset>
+            ) : (
+              <p>No events available to link.</p>
+            )}
+
+            <section>
+              {eventsToCreate.map((newEvent, index) => {
+                const eventFieldset = newEvent.getFieldset()
+
+                return (
+                  <Fieldset key={newEvent.key} className={styles.col2}>
+                    <Input
+                      label={"Name"}
+                      errors={eventFieldset.name.errors}
+                      {...getInputProps(eventFieldset.name, { type: "text" })}
+                    />
+                    <Input
+                      label={"Type"}
+                      errors={eventFieldset.type.errors}
+                      {...getInputProps(eventFieldset.type, { type: "text" })}
+                    />
+                    <Input
+                      label={"Date"}
+                      errors={eventFieldset.date.errors}
+                      {...getInputProps(eventFieldset.date, { type: "date" })}
+                    />
+                    <Input
+                      label={"Place"}
+                      errors={eventFieldset.place.errors}
+                      {...getInputProps(eventFieldset.place, { type: "text" })}
+                    />
+                    <TextArea
+                      label={"Note"}
+                      errors={eventFieldset.note.errors}
+                      {...getTextareaProps(eventFieldset.note)}
+                    />
+                    <button
+                      {...form.remove.getButtonProps({
+                        name: fields.eventsToCreate.name,
+                        index,
+                      })}
+                    >
+                      Delete
+                    </button>
+                  </Fieldset>
+                )
+              })}
+            </section>
+
+            <button
+              {...form.insert.getButtonProps({
+                name: fields.eventsToCreate.name,
+              })}
+            >
+              Add Event
+            </button>
+          </section>
+
           <button type="submit">Create</button>
+          <Link to={"/persons"}>Cancel</Link>
         </Form>
       </PageBody>
     </Page>
@@ -132,4 +185,5 @@ export default function Route({ actionData }: Route.ComponentProps) {
 }
 
 export { action } from "./_action"
+export { loader } from "./_loader"
 export { meta } from "./_meta"
