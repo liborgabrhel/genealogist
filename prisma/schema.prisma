@@ -49,15 +49,27 @@ model Relationship {
   targetPersonId String
   targetPerson   Person @relation("Target Person", fields: [targetPersonId], references: [id], onUpdate: Cascade, onDelete: Cascade)
 
-  type String // e.g., parent, child, sibling, partner, ex-partner, spouse, ex-spouse
+  typeId String
+  type   RelationshipType @relation(fields: [typeId], references: [id], onUpdate: Cascade, onDelete: Restrict)
 
   note String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([sourcePersonId, targetPersonId, type]) // For finding specific relationships
-  @@index([type]) // For filtering by relationship type
+  @@index([sourcePersonId, targetPersonId, typeId]) // For finding specific relationships
+  @@index([typeId]) // For filtering by relationship type
+}
+
+model RelationshipType {
+  id String @id @default(cuid())
+
+  name String @unique // e.g., parent, child, sibling, spouse, partner, ex-spouse, ex-partner, step-parent, step-child
+
+  relationShips Relationship[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Profession {
@@ -82,12 +94,12 @@ model Residence {
   name        String
   description String?
 
+  buildingNumber String?
+  street         String?
+  city           String?
+  postalCode     String?
   country        String
   state          String?
-  city           String?
-  street         String?
-  buildingNumber String?
-  postalCode     String?
   coordinates    String?
 
   note String?
@@ -113,7 +125,8 @@ model Photo {
   contentType String
   blob        Bytes
 
-  type String? // e.g., portrait, group photo, event photo
+  typeId String?
+  type   PhotoType? @relation(fields: [typeId], references: [id], onUpdate: Cascade, onDelete: SetNull)
 
   note String?
 
@@ -123,7 +136,18 @@ model Photo {
   updatedAt DateTime @updatedAt
 
   @@index([name]) // For photo name searches
-  @@index([type]) // For filtering by photo type
+  @@index([typeId]) // For filtering by photo tag
+}
+
+model PhotoType {
+  id String @id @default(cuid())
+
+  name String @unique // e.g., portrait, group photo, event photo, location photo, document photo
+
+  photos Photo[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Document {
@@ -136,7 +160,8 @@ model Document {
   contentType String
   blob        Bytes
 
-  type String? // e.g., birth certificate, marriage certificate, death certificate
+  typeId String?
+  type   DocumentType? @relation(fields: [typeId], references: [id], onUpdate: Cascade, onDelete: SetNull)
 
   note String?
 
@@ -145,8 +170,19 @@ model Document {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([type]) // For filtering by document type
-  @@index([fileName]) // For file searches
+  @@index([name]) // For document name searches
+  @@index([typeId]) // For filtering by document tag
+}
+
+model DocumentType {
+  id String @id @default(cuid())
+
+  name String @unique // e.g., birth certificate, marriage certificate, death certificate, diploma, passport, visa
+
+  documents Document[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Event {
